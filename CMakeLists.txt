@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED (VERSION 3.1.0)
+CMAKE_MINIMUM_REQUIRED (VERSION 3.1.0...3.15.0)
 
 INCLUDE (CheckIncludeFiles)
 INCLUDE (CheckTypeSize)
@@ -9,6 +9,8 @@ INCLUDE (CheckStructHasMember)
 INCLUDE (CheckLibraryExists)
 
 PROJECT (c-ares LANGUAGES C VERSION "1.19.1" )
+
+message (STATUS "c-ares version ${PROJECT_VERSION}")
 
 # Set this version before release
 SET (CARES_VERSION "${PROJECT_VERSION}")
@@ -29,7 +31,7 @@ INCLUDE (GNUInstallDirs) # include this *AFTER* PROJECT(), otherwise paths are w
 SET (CARES_LIB_VERSIONINFO "8:1:6")
 
 
-OPTION (CARES_STATIC     "Build as a static library"                                             OFF)
+OPTION (CARES_STATIC     "Build as a static library"                                             ON)
 OPTION (CARES_SHARED     "Build as a shared library"                                             ON)
 OPTION (CARES_INSTALL    "Create installation targets (chain builders may want to disable this)" ON)
 OPTION (CARES_STATIC_PIC "Build the static library as PIC (position independent)"                OFF)
@@ -38,6 +40,12 @@ OPTION (CARES_BUILD_CONTAINER_TESTS "Build and run container tests (implies CARE
 OPTION (CARES_BUILD_TOOLS "Build tools"                                                          ON)
 SET    (CARES_RANDOM_FILE "/dev/urandom" CACHE STRING "Suitable File / Device Path for entropy, such as /dev/urandom")
 
+OPTION (CARES_WITHOUT_APPS "Build c-ares without apps." OFF)
+OPTION (CARES_WITHOUT_INSTALL_ALL "Build c-ares without installing all artifacts." OFF)
+OPTION (CARES_WITHOUT_INSTALL_FILES "Build c-ares without installing files." OFF)
+OPTION (CARES_WITHOUT_INSTALL_HEADERS "Build c-ares without installing headers." OFF)
+OPTION (CARES_WITHOUT_INSTALL_LIBRARIES "Build c-ares without installing libraries." OFF)
+OPTION (CARES_WITHOUT_TEST_APPS "Build c-ares without test apps." OFF)
 
 # Tests require static to be enabled on Windows to be able to access otherwise hidden symbols
 IF (CARES_BUILD_TESTS AND (NOT CARES_STATIC) AND WIN32)
@@ -66,6 +74,25 @@ IF (MSVC)
 		SET (config_type)
 		SET (flag_var)
 	ENDIF ()
+ENDIF ()
+
+IF (CARES_WITHOUT_APPS)
+	SET (CARES_BUILD_TOOLS OFF)
+ELSE ()
+	SET (CARES_BUILD_TOOLS ON)
+ENDIF ()
+IF (CARES_WITHOUT_INSTALL_ALL)
+	SET (CARES_INSTALL OFF)
+ELSE ()
+	SET (CARES_INSTALL ON)
+ENDIF ()
+IF (CARES_WITHOUT_TEST_APPS)
+	SET (CARES_BUILD_TESTS OFF)
+ELSE ()
+	SET (CARES_BUILD_TESTS ON)
+ENDIF ()
+IF (UNIX)
+	SET (CARES_STATIC_PIC ON)
 ENDIF ()
 
 # Keep build organized.
@@ -633,7 +660,7 @@ ENDIF ()
 
 
 # Export targets
-IF (CARES_INSTALL)
+IF (CARES_INSTALL AND (NOT CARES_WITHOUT_INSTALL_FILES))
 	SET (CMAKECONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 	INCLUDE (CMakePackageConfigHelpers)
 	CONFIGURE_PACKAGE_CONFIG_FILE (${PROJECT_NAME}-config.cmake.in ${PROJECT_NAME}-config.cmake
@@ -664,7 +691,7 @@ SET (CARES_FOUND 1 CACHE INTERNAL "CARES LIBRARY FOUND")
 SET (CARES_LIBRARIES ${PROJECT_NAME}::cares CACHE INTERNAL "CARES LIBRARIES")
 
 
-IF (CARES_INSTALL)
+IF (CARES_INSTALL AND (NOT CARES_WITHOUT_INSTALL_FILES))
     # Package creation
     set( CPACK_PACKAGE_NAME ${PROJECT_NAME} )
     set( CPACK_PACKAGE_VENDOR "Daniel Stenberg" ) # Github project owner

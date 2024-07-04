@@ -1,5 +1,5 @@
 # Headers and Man Pages installation target
-IF (CARES_INSTALL)
+IF (CARES_INSTALL AND (NOT CARES_WITHOUT_INSTALL_FILES))
 	# ManPages
 	FILE (GLOB DevelManPages "." "*.3")
 	INSTALL (FILES ${DevelManPages}
