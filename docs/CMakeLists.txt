@@ -1,5 +1,7 @@
+# Copyright (C) The c-ares project and its contributors
+# SPDX-License-Identifier: MIT
 # Headers and Man Pages installation target
-IF (CARES_INSTALL AND (NOT CARES_WITHOUT_INSTALL_FILES))
+IF (CARES_INSTALL)
 	# ManPages
 	FILE (GLOB DevelManPages "." "*.3")
 	INSTALL (FILES ${DevelManPages}
