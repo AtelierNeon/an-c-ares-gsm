@@ -69,7 +69,7 @@ IF ((CARES_BUILD_TESTS OR CARES_BUILD_CONTAINER_TESTS) AND (NOT CARES_STATIC) AN
 	MESSAGE (WARNING "Static building was requested be disabled, but re-enabled to support tests")
 ENDIF ()
 
-INCLUDE (EnableWarnings)
+#INCLUDE (EnableWarnings)
 
 IF (MSVC)
 	# allow linking against the static runtime library in msvc
