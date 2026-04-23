@@ -12,7 +12,7 @@ INCLUDE (CheckCSourceCompiles)
 INCLUDE (CheckStructHasMember)
 INCLUDE (CheckLibraryExists)
 
-PROJECT (c-ares LANGUAGES C VERSION "1.34.5" )
+PROJECT (c-ares LANGUAGES C VERSION "1.34.6" )
 
 message (STATUS "c-ares version ${PROJECT_VERSION}")
 
@@ -32,7 +32,7 @@ INCLUDE (GNUInstallDirs) # include this *AFTER* PROJECT(), otherwise paths are w
 # For example, a version of 4:0:2 would generate output such as:
 #    libname.so   -> libname.so.2
 #    libname.so.2 -> libname.so.2.2.0
-SET (CARES_LIB_VERSIONINFO "21:4:19")
+SET (CARES_LIB_VERSIONINFO "21:5:19")
 
 
 OPTION (CARES_STATIC        "Build as a static library"                                             ON)
@@ -379,7 +379,7 @@ ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "SunOS")
 	LIST (APPEND SYSFLAGS -D__EXTENSIONS__ -D_REENTRANT -D_XOPEN_SOURCE=600)
 ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "AIX")
 	LIST (APPEND SYSFLAGS -D_ALL_SOURCE -D_XOPEN_SOURCE=700 -D_USE_IRS)
-ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD" OR CMAKE_SYSTEM_NAME STREQUAL "MidnightBSD")
 	# Don't define _XOPEN_SOURCE on FreeBSD, it actually reduces visibility instead of increasing it
 ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "QNX")
 	LIST (APPEND SYSFLAGS -D_QNX_SOURCE)
@@ -826,6 +826,7 @@ IF (HAVE_GETADDRINFO)
 		CMAKE_SYSTEM_NAME STREQUAL "NetBSD" OR
 		CMAKE_SYSTEM_NAME STREQUAL "SunOS" OR
 		CMAKE_SYSTEM_NAME STREQUAL "FreeBSD" OR
+		CMAKE_SYSTEM_NAME STREQUAL "MidnightBSD" OR
 		CMAKE_SYSTEM_NAME STREQUAL "AIX" OR
 		WIN32)
 			SET (HAVE_GETADDRINFO_THREADSAFE 1)
